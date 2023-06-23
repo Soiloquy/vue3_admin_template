@@ -26,13 +26,17 @@ requset.interceptors.response.use((response)=>{
     return response.data
 },(error)=>{
     // 失败回调
-    let message=''
-    let status=error.response.status
-    message=`${status}，请求错误`
-    ElMessage({
-        type:"error",
-        message
-    })
+    try {
+        let message=''
+        let status=error.response.status
+        message=`${status}，请求错误`
+        ElMessage({
+            type:"error",
+            message
+        })
+    } catch (error:any) {
+        console.log(error.message);
+    }
     return Promise.reject(error)
 })
 
