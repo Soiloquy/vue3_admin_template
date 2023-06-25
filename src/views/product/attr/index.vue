@@ -19,9 +19,9 @@
                     </template>
                 </el-table-column>
                 <el-table-column label="操作" align="center" width="130px">
-                    <template #="{}">
-                        <el-button type="primary" size="small" icon="Edit" @click="updateAttr"></el-button>
-                        <el-popconfirm title="你确定要删除？" icon-color="#ec2727">
+                    <template #="{row}">
+                        <el-button type="primary" size="small" icon="Edit" @click="updateAttr(row)"></el-button>
+                        <el-popconfirm title="你确定要删除？" icon-color="#ec2727" @confirm="deleteAttr(row.id)">
                             <template #reference>
                                 <el-button type="danger" size="small" icon="Delete"></el-button>
                             </template>
@@ -49,11 +49,15 @@
                 <el-table-column label="序号" type="index" align="center" width="120px"></el-table-column>
                 <el-table-column label="属性值名称"  align="center">
                     <template #="{row,$index}">
-                        <el-input v-if="row.flag" placeholder="请输入属性值" v-model="row.valueName" @blur="toLook(row,$index)"></el-input>
-                        <div v-else @click="toEdit(row)">{{ row.valueName }}</div>
+                        <el-input :ref="(vc:any)=>inputArr[$index]=vc" v-if="row.flag" placeholder="请输入属性值" v-model="row.valueName" @blur="toLook(row,$index)"></el-input>
+                        <div v-else @click="toEdit(row,$index)">{{ row.valueName }}</div>
                     </template>
                 </el-table-column>
-                <el-table-column label="属性值操作"  align="center"></el-table-column>
+                <el-table-column label="属性值操作"  align="center">
+                    <template #="{$index}">
+                        <el-button type="danger" size="small" :icon="Delete" @click="attrParams.attrValueList.splice($index,1)"></el-button>
+                    </template>
+                </el-table-column>
             </el-table>
             <el-button type="primary" size="default" @click="saveAttr" :disabled="attrParams.attrValueList.length>0?false:true">保存</el-button>
             <el-button size="default" @click="cancle">取消</el-button>
@@ -62,11 +66,12 @@
 </template>
 
 <script setup lang="ts">
-import { watch,ref,reactive } from 'vue';
-import {reqGetAttr ,reqAddAndUpdate} from '../../../api/user/acl/product/attr';
+import { watch,ref,reactive,nextTick ,onBeforeUnmount} from 'vue';
+import {reqGetAttr ,reqAddAndUpdate,reqDelete} from '../../../api/user/acl/product/attr';
 import type {AttrResponseData,Attr,AttrValue} from '../../../api/user/acl/product/attr/type'
 import useCategoryStore from '../../../store/modules/category';
 import { ElMessage } from 'element-plus'
+import { Delete } from '@element-plus/icons-vue';
 
 let categoryStore=useCategoryStore();
 let attrArr=ref<Attr[]>([])
@@ -80,6 +85,8 @@ let attrParams=reactive<Attr>({
     categoryId:'',//三级分类的ID
     categoryLevel:3,
 })
+// 存储对应的组件实例
+let inputArr=ref<any>([])
 
 watch(()=>categoryStore.c3Id,()=>{
     getAttr()
@@ -97,16 +104,18 @@ const getAttr=async()=>{
 const addAttr=()=>{
     // 清空数据
     Object.assign(attrParams,{
-        attrName:'',//新增属性的名字
-        attrValueList:[],//新增的属性值数组
-        categoryId:categoryStore.c3Id,//三级分类的ID
+        attrName:'',
+        attrValueList:[],
+        categoryId:categoryStore.c3Id,
         categoryLevel:3,
     })
     sence.value=1
 }
 
-const updateAttr=()=>{
+const updateAttr=(row:Attr)=>{
     sence.value=1
+    // 注意要进行深拷贝
+    Object.assign(attrParams,JSON.parse(JSON.stringify(row)))
 }
 
 const cancle=()=>{
@@ -118,6 +127,9 @@ const addAttrValue=()=>{
         valueName:'',
         flag:true
     })
+    nextTick(()=>{
+        inputArr.value[attrParams.attrValueList.length-1].focus()
+    })
 }
 
 const saveAttr=async()=>{
@@ -128,12 +140,14 @@ const saveAttr=async()=>{
             type:"success",
             message:attrParams.id?'修改成功':'添加成功'
         })
+        attrParams.id=undefined
         getAttr()
     }else{
         ElMessage({
             type:"error",
             message:attrParams.id?'修改失败':'添加失败'
-        })         
+        })        
+        attrParams.id=undefined 
     }
 }
 
@@ -163,9 +177,32 @@ const toLook=(row:AttrValue,$index:number)=>{
     row.flag=false
 }
 
-const toEdit=(row:AttrValue)=>{
+const toEdit=(row:AttrValue,$index:number)=>{
     row.flag=true
+    nextTick(()=>{
+        inputArr.value[$index].focus()
+    })
 }
+
+const deleteAttr=async(atteId:number)=>{
+    let result= await reqDelete(atteId)
+    if (result.code==200) {
+        ElMessage({
+            type:"success",
+            message:"删除成功"
+        })
+        getAttr()
+    }else{
+        ElMessage({
+            type:"error",
+            message:"删除失败"
+        })
+    }
+}
+// 销毁后清空分类仓库的数据
+onBeforeUnmount(()=>{
+    categoryStore.$reset()
+})
 </script>
 
 <style scoped>
