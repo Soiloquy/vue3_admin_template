@@ -32,7 +32,7 @@ requset.interceptors.response.use((response)=>{
         message=`${status}，请求错误`
         ElMessage({
             type:"error",
-            message
+            message:message
         })
     } catch (error:any) {
         console.log(error.message);
