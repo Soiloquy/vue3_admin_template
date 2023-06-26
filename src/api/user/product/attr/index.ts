@@ -1,5 +1,5 @@
 // 统一管理商品属性相关的接口
-import request from "../../../../../utils/request"
+import request from "../../../../utils/request"
 import type { CategoryResponseData,AttrResponseData,Attr } from "./type"
 
 enum API{

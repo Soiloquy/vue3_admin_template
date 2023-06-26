@@ -1,5 +1,5 @@
 import type { RouteRecordRaw } from "vue-router"
-import type { CategoryObj } from "../../../api/user/acl/product/attr/type"
+import type { CategoryObj } from "../../../api/user/product/attr/type"
 // 定义小仓库数据state类型
 export interface UserState{
     token:string|null

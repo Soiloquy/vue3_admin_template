@@ -1,7 +1,7 @@
 // 商品分类全局组件的小仓库
 import { defineStore } from "pinia";
-import { reqC1,reqC2,reqC3 } from "../../api/user/acl/product/attr";
-import type { CategoryResponseData } from "../../api/user/acl/product/attr/type";
+import { reqC1,reqC2,reqC3 } from "../../api/user/product/attr";
+import type { CategoryResponseData } from "../../api/user/product/attr/type";
 import type { CategoryState } from "./types/type";
 
 let useCategoryStore=defineStore('Category',{
