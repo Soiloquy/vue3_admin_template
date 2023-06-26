@@ -1,5 +1,5 @@
 // 品牌管理模块接口
-import requset from "../../../../../utils/request";
+import requset from "../../../../utils/request";
 import type { TradeMarkResponseData,TradeMark } from "./type";
 
 // 接口地址
