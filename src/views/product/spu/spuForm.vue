@@ -52,11 +52,40 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+import type {BaseSaleAttr, SaleAttr, SpuData, SpuImg} from '../../../api/user/product/spu/type'
+import type { TradeMark } from '../../../api/user/product/trademark/type';
+import { reqAllTrademark,reqGetSpuImage,reqSaleAttr,reqBaseSaleAttr } from '../../../api/user/product/spu';
+
 let $emit=defineEmits(['changeSence']);
 
 const cancel=()=>{
     $emit('changeSence',0)
 }
+
+// 存储已有的SPU数据
+let allTrademark=ref<TradeMark[]>([])
+let imgList=ref<SpuImg[]>([])
+let saleAttr=ref<SaleAttr[]>([])
+let allSaleAttr=ref<BaseSaleAttr[]>([])
+
+const initSpuData=async(data:SpuData)=>{
+    // console.log(data);
+    let result=await reqAllTrademark()
+    let result1=await reqGetSpuImage((data.id as number))
+    let result2=await reqSaleAttr((data.id as number))
+    let result3=await reqBaseSaleAttr()
+    // 所有的商品数据
+    allTrademark.value=result.data
+    // 所有的图片
+    imgList.value=result1.data
+    // 销售属性
+    saleAttr.value=result2.data
+    // 所有销售属性
+    allSaleAttr.value=result3.data
+}
+
+defineExpose({initSpuData})
 </script>
 
 <style scoped>

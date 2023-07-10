@@ -16,9 +16,9 @@
                     <el-table-column label="SPU名称" align="center" prop="spuName"></el-table-column>
                     <el-table-column label="SPU描述" align="center" prop="description"></el-table-column>
                     <el-table-column label="SPU操作" align="center">
-                        <template #="{}">
+                        <template #="{row}">
                             <el-button type="primary" size="small" icon="Plus" title="添加SKU"></el-button>
-                            <el-button color="#e6fa30" size="small" icon="Edit" title="修改SPU" @click="updateSpu"></el-button>
+                            <el-button color="#e6fa30" size="small" icon="Edit" title="修改SPU" @click="updateSpu(row)"></el-button>
                             <el-button type="warning" size="small" icon="Message" title="查看SKU列表"></el-button>
                             <el-popconfirm title="你确定要删除？" icon-color="#ec2727">
                                 <template #reference>
@@ -41,7 +41,7 @@
                 />
             </div>
             <!-- 添加SPU|修改SPU -->
-            <SpuForm v-show="sence==1" @changeSence="changeSence"></SpuForm>
+            <SpuForm v-show="sence==1" @changeSence="changeSence" ref="spuForm"></SpuForm>
             <SkuForm v-show="sence==2"></SkuForm>
         </el-card>
     </div>
@@ -49,7 +49,7 @@
 
 <script setup lang="ts">
 import { ref ,watch} from 'vue';
-import type {HasSpuResponseData,Records} from '../../../api/user/product/spu/type'
+import type {HasSpuResponseData,Records, SpuData} from '../../../api/user/product/spu/type'
 import Category from '../../../components/Category/index.vue'
 import useCategoryStore from '../../../store/modules/category';
 import { reqGetSpu } from '../../../api/user/product/spu/index';
@@ -62,6 +62,7 @@ let currentPage=ref(1)
 let pageSize=ref(3)
 let total=ref<number>(0)
 let records=ref<Records>([])
+let spuForm=ref<any>()
 
 watch(()=>categoryStore.c3Id,()=>{
     getSpu()
@@ -84,8 +85,9 @@ const addSpu=()=>{
     sence.value=1
 }
 
-const updateSpu=()=>{
+const updateSpu=(row:SpuData)=>{
     sence.value=1
+    spuForm.value.initSpuData(row)
 }
 
 // SpuForm绑定的自定义事件
