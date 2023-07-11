@@ -12,8 +12,8 @@ export interface SpuData{
     description:string,
     category3Id:string|number,
     tmId:number,
-    spuSaleAttrList:null,
-    spuImageList:null
+    spuSaleAttrList:null|SaleAttr[],
+    spuImageList:null|SpuImg[]
 }
 
 export type Records=SpuData[]
@@ -35,12 +35,14 @@ export interface TradeMarkDates extends ResponseData{
 
 // 商品图片
 export interface SpuImg{
-    id:number,
+    id?:number,
     createTime:string,
     updateTime:string,
-    spuId:number,
-    imgName:string,
-    imgUrl:string
+    spuId?:number,
+    imgName?:string,
+    imgUrl?:string,
+    name?:string,
+    url?:string
 }
 
 export interface AllSpuImg extends ResponseData{
