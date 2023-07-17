@@ -11,7 +11,7 @@ export interface SpuData{
     spuName:string,
     description:string,
     category3Id:string|number,
-    tmId:number,
+    tmId:number|string,
     spuSaleAttrList:null|SaleAttr[],
     spuImageList:null|SpuImg[]
 }
@@ -63,10 +63,10 @@ export interface SaleAttrValue{
 
 export interface SaleAttr{
     id?:number,
-    createTime:null,
-    updateTime:null,
-    spuId:number,
-    baseSaleAttrId:number,
+    createTime?:null,
+    updateTime?:null,
+    spuId?:number,
+    baseSaleAttrId:number|string,
     saleAttrName:string,
     spuSaleAttrValueList:SaleAttrValue[]
 }

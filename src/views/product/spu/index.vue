@@ -34,7 +34,7 @@
                     v-model:page-size="pageSize"
                     @current-change="getSpu"
                     @size-change="changePageSize"
-                    :page-sizes="[3,5,7]"
+                    :page-sizes="[5,7,9]"
                     :background=true
                     layout="prev, pager, next, jumper,->, sizes,total"
                     :total="total"
@@ -59,7 +59,7 @@ import SpuForm from './spuForm.vue';
 let sence=ref<number>(0)
 let categoryStore=useCategoryStore()
 let currentPage=ref(1)
-let pageSize=ref(3)
+let pageSize=ref(5)
 let total=ref<number>(0)
 let records=ref<Records>([])
 let spuForm=ref<any>()
@@ -83,6 +83,7 @@ const changePageSize=()=>{
 
 const addSpu=()=>{
     sence.value=1
+    spuForm.value.initAddSpu(categoryStore.c3Id)
 }
 
 const updateSpu=(row:SpuData)=>{
@@ -91,8 +92,13 @@ const updateSpu=(row:SpuData)=>{
 }
 
 // SpuForm绑定的自定义事件
-const changeSence=(num:number)=>{
-    sence.value=num
+const changeSence=(obj:any)=>{
+    sence.value=obj.flag
+    if (obj.params=='add') {
+        getSpu()
+    } else {
+        getSpu(currentPage.value)
+    }
 }
 </script>
 

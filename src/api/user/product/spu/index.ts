@@ -3,19 +3,19 @@ import request from "../../../../utils/request"
 import {SpuData, HasSpuResponseData,TradeMarkDates,AllSpuImg,ResponseSaleAttr,AllBaseSaleAttr } from "./type"
 
 enum API{
-    GETSPU_URL="admin/product/",
+    GETSPU_URL="/admin/product/",
     // 获取全部品牌的数据
-    ALLTRADEMARK_URL='admin/product/baseTrademark/getTrademarkList',
+    ALLTRADEMARK_URL='/admin/product/baseTrademark/getTrademarkList',
     // 获取图片
-    GETSPUIMAGE_URL='admin/product/spuImageList/',
+    GETSPUIMAGE_URL='/admin/product/spuImageList/',
     // 获取销售属性
-    GETSALEATTR_URL='admin/product/spuSaleAttrList/',
+    GETSALEATTR_URL='/admin/product/spuSaleAttrList/',
     // 获取全部的销售属性
-    BASESALEATTR_URL='admin/product/baseSaleAttrList',
+    BASESALEATTR_URL='/admin/product/baseSaleAttrList',
     // 追加一个新的SPU
-    ADDSPU_URL='admin/product/saveSpuInfo',
+    ADDSPU_URL='/admin/product/saveSpuInfo',
     // 更新已有的SPU
-    UPDATESPU_URL='admin/product/saveSpuInfo'
+    UPDATESPU_URL='/admin/product/updateSpuInfo'
 }
 
 export const reqGetSpu=(page:number,limit:number,category3Id:string|number)=>
@@ -33,10 +33,10 @@ request.get<any,ResponseSaleAttr>(API.GETSALEATTR_URL+spuId)
 export const reqBaseSaleAttr=()=>
 request.get<any,AllBaseSaleAttr>(API.BASESALEATTR_URL)
 
-export const reqAddSpu=(data:SpuData)=>{
+export const reqAddSpuOrUpdate=(data:SpuData)=>{
     if (data.id) {
-        request.post<any,any>(API.UPDATESPU_URL,data)
+        return request.post<any,any>(API.UPDATESPU_URL,data)
     } else {
-        request.post<any,any>(API.ADDSPU_URL,data)
+        return request.post<any,any>(API.ADDSPU_URL,data)
     }
 }
