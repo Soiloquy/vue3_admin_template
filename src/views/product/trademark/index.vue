@@ -27,7 +27,7 @@
             v-model:page-size="pageSize"
             @current-change="getHasTrademark"
             @size-change="getHasTrademark"
-            :page-sizes="[3,5,7]"
+            :page-sizes="[5,7,9]"
             :background=true
             layout="prev, pager, next, jumper,->, sizes,total"
             :total="total"
@@ -67,7 +67,7 @@ import type {Records,TradeMarkResponseData,TradeMark} from '../../../api/user/pr
 import { ElMessage } from 'element-plus';
 
 let currentPage=ref(1)
-let pageSize=ref(3)
+let pageSize=ref(5)
 let total=ref<number>(0)
 let trademarkArr=ref<Records>([])
 let dialogFormVisible=ref<boolean>(false)
