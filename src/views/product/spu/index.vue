@@ -17,7 +17,7 @@
                     <el-table-column label="SPU描述" align="center" prop="description"></el-table-column>
                     <el-table-column label="SPU操作" align="center">
                         <template #="{row}">
-                            <el-button type="primary" size="small" icon="Plus" title="添加SKU" @click="addSku"></el-button>
+                            <el-button type="primary" size="small" icon="Plus" title="添加SKU" @click="addSku(row)"></el-button>
                             <el-button color="#e6fa30" size="small" icon="Edit" title="修改SPU" @click="updateSpu(row)"></el-button>
                             <el-button type="warning" size="small" icon="Message" title="查看SKU列表"></el-button>
                             <el-popconfirm title="你确定要删除？" icon-color="#ec2727">
@@ -42,7 +42,7 @@
             </div>
             <!-- 添加SPU|修改SPU -->
             <SpuForm v-show="sence==1" @changeSence="changeSence" ref="spuForm"></SpuForm>
-            <SkuForm v-show="sence==2" @changeSence="changeSence"></SkuForm>
+            <SkuForm v-show="sence==2" @changeSence="changeSence" ref="skuForm"></SkuForm>
         </el-card>
     </div>
 </template>
@@ -63,6 +63,7 @@ let pageSize=ref(5)
 let total=ref<number>(0)
 let records=ref<Records>([])
 let spuForm=ref<any>()
+let skuForm=ref<any>()
 
 watch(()=>categoryStore.c3Id,()=>{
     getSpu()
@@ -101,8 +102,9 @@ const changeSence=(obj:any)=>{
     }
 }
 
-const addSku=()=>{
+const addSku=(row:SpuData)=>{
     sence.value=2
+    skuForm.value.initSkuData(categoryStore.c1Id,categoryStore.c2Id,row)
 }
 </script>
 
