@@ -19,8 +19,8 @@
                         <template #="{row}">
                             <el-button type="primary" size="small" icon="Plus" title="添加SKU" @click="addSku(row)"></el-button>
                             <el-button color="#e6fa30" size="small" icon="Edit" title="修改SPU" @click="updateSpu(row)"></el-button>
-                            <el-button type="warning" size="small" icon="Message" title="查看SKU列表"></el-button>
-                            <el-popconfirm title="你确定要删除？" icon-color="#ec2727">
+                            <el-button type="warning" size="small" icon="Message" title="查看SKU列表" @click="findSku(row)"></el-button>
+                            <el-popconfirm title="你确定要删除？" icon-color="#ec2727" @confirm="deleteSpu(row)">
                                 <template #reference>
                                     <el-button type="danger" size="small" icon="delete" title="删除SPU"></el-button>
                                 </template>
@@ -43,18 +43,31 @@
             <!-- 添加SPU|修改SPU -->
             <SpuForm v-show="sence==1" @changeSence="changeSence" ref="spuForm"></SpuForm>
             <SkuForm v-show="sence==2" @changeSence="changeSence" ref="skuForm"></SkuForm>
+            <el-dialog v-model="show"  title="SKU列表">
+                <el-table border :data="SkuArr">
+                    <el-table-column lable="SKU名字" prop="skuName"></el-table-column>
+                    <el-table-column lable="SKU价格" prop="price"></el-table-column>
+                    <el-table-column lable="SKU重量" prop="weight"></el-table-column>
+                    <el-table-column lable="SKU图片">
+                        <template #="{row}">
+                            <img :src="row.skuDefaultImg" style="width: 100px; height: 100px;">
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-dialog>
         </el-card>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref ,watch} from 'vue';
-import type {HasSpuResponseData,Records, SpuData} from '../../../api/user/product/spu/type'
+import { ref ,watch,onBeforeUnmount} from 'vue';
+import type {HasSpuResponseData,Records, SpuData,SkuInfoData,SkuData} from '../../../api/user/product/spu/type'
 import Category from '../../../components/Category/index.vue'
 import useCategoryStore from '../../../store/modules/category';
-import { reqGetSpu } from '../../../api/user/product/spu/index';
+import { reqGetSpu,reqSkuInfo,reqDeleteSku } from '../../../api/user/product/spu/index';
 import SkuForm from './skuForm.vue';
 import SpuForm from './spuForm.vue';
+import { ElMessage } from 'element-plus';
 
 let sence=ref<number>(0)
 let categoryStore=useCategoryStore()
@@ -64,6 +77,8 @@ let total=ref<number>(0)
 let records=ref<Records>([])
 let spuForm=ref<any>()
 let skuForm=ref<any>()
+let SkuArr=ref<SkuData[]>([])
+let show=ref<boolean>(false)
 
 watch(()=>categoryStore.c3Id,()=>{
     getSpu()
@@ -106,6 +121,39 @@ const addSku=(row:SpuData)=>{
     sence.value=2
     skuForm.value.initSkuData(categoryStore.c1Id,categoryStore.c2Id,row)
 }
+
+const findSku=async(row:any)=>{
+    let result:SkuInfoData=await reqSkuInfo(row.id)
+    if (result.code==200) {
+        SkuArr.value=result.data
+        show.value=true
+    }else{
+        ElMessage({
+            type:'error',
+            message:'获取信息失败'
+        })
+    }
+}
+
+const deleteSpu=async(row:SpuData)=>{
+    let result=await reqDeleteSku((row.id as number))
+    if (result.code) {
+        ElMessage({
+            type:"success",
+            message:"删除成功"
+        })
+        getSpu(records.value.length>1?currentPage.value:currentPage.value-1)
+    }else{
+        ElMessage({
+            type:"error",
+            message:"删除失败"
+        })
+    }
+}
+
+onBeforeUnmount(()=>{
+    categoryStore.$reset()
+})
 </script>
 
 <style scoped>
