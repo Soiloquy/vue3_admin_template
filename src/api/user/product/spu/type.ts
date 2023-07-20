@@ -104,7 +104,7 @@ export interface SkuData{
     weight:string|number,
     skuDesc:string,
     skuAttrValueList:AttrValue[],
-    skuSaleAttrValueList:[],
+    skuSaleAttrValueList:SaleAttrValueSku[],
     skuDefaultImg:string
 }
 
