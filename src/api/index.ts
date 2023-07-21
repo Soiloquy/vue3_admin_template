@@ -1,5 +1,5 @@
 // 统一管理用户相关的接口
-import request from "../../utils/request"
+import request from "../utils/request"
 import { loginFormData,loginResponseData,userInfoResponseData } from "./type"
 
 //项目用户相关的请求地址
