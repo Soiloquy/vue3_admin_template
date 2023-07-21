@@ -1,8 +1,8 @@
 // 创建用户相关的小仓库
 import { defineStore } from "pinia";
-import { reqLogin, reqUserInfo,reqLogout } from "../../api/user";
+import { reqLogin, reqUserInfo,reqLogout } from "../../api";
 import type { UserState } from "./types/type";
-import type { loginFormData,loginResponseData,userInfoResponseData } from "../../api/user/type";
+import type { loginFormData,loginResponseData,userInfoResponseData } from "../../api/type";
 import { SET_TOKEN ,GET_TOKEN ,REMOVE_TOKEN} from "../../utils/token";
 // 引入常量路由
 import { constantRoute } from "../../router/routers";
