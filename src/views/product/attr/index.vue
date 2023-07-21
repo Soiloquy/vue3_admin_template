@@ -67,8 +67,8 @@
 
 <script setup lang="ts">
 import { watch,ref,reactive,nextTick ,onBeforeUnmount} from 'vue';
-import {reqGetAttr ,reqAddAndUpdate,reqDelete} from '../../../api/user/product/attr';
-import type {AttrResponseData,Attr,AttrValue} from '../../../api/user/product/attr/type'
+import {reqGetAttr ,reqAddAndUpdate,reqDelete} from '../../../api/product/attr';
+import type {AttrResponseData,Attr,AttrValue} from '../../../api/product/attr/type'
 import useCategoryStore from '../../../store/modules/category';
 import { ElMessage } from 'element-plus'
 import { Delete } from '@element-plus/icons-vue';

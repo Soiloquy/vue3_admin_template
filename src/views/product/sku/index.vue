@@ -80,8 +80,8 @@
 
 <script setup lang="ts">
 import { ref,onMounted } from 'vue';
-import {reqSkuList,reqCancelSaleSku,reqSaleSku,reqGetSkuInfo,reqDeleteSku} from '../../../api/user/product/sku/index'
-import type { SkuResponseData,SkuData,SkuInfoData } from '../../../api/user/product/sku/type';
+import {reqSkuList,reqCancelSaleSku,reqSaleSku,reqGetSkuInfo,reqDeleteSku} from '../../../api/product/sku/index'
+import type { SkuResponseData,SkuData,SkuInfoData } from '../../../api/product/sku/type';
 import { ElMessage } from 'element-plus';
 
 let currentPage=ref(1)

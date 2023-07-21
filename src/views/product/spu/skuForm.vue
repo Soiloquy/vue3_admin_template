@@ -56,9 +56,9 @@
 
 <script setup lang="ts">
 import { ref,reactive } from 'vue';
-import { reqGetAttr } from '../../../api/user/product/attr';
-import { reqGetSpuImage,reqSaleAttr,reqAddSku } from '../../../api/user/product/spu';
-import  type {SkuData} from '../../../api/user/product/spu/type'
+import { reqGetAttr } from '../../../api/product/attr';
+import { reqGetSpuImage,reqSaleAttr,reqAddSku } from '../../../api/product/spu';
+import  type {SkuData} from '../../../api/product/spu/type'
 import { ElMessage } from 'element-plus';
 
 let $emit=defineEmits(['changeSence']);

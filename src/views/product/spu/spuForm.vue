@@ -70,9 +70,9 @@
 
 <script setup lang="ts">
 import { ref,computed } from 'vue';
-import type {BaseSaleAttr, SaleAttr, SpuData} from '../../../api/user/product/spu/type'
-import type { TradeMark } from '../../../api/user/product/trademark/type';
-import { reqAllTrademark,reqGetSpuImage,reqSaleAttr,reqBaseSaleAttr,reqAddSpuOrUpdate } from '../../../api/user/product/spu';
+import type {BaseSaleAttr, SaleAttr, SpuData} from '../../../api/product/spu/type'
+import type { TradeMark } from '../../../api/product/trademark/type';
+import { reqAllTrademark,reqGetSpuImage,reqSaleAttr,reqBaseSaleAttr,reqAddSpuOrUpdate } from '../../../api/product/spu';
 import { ElMessage } from 'element-plus';
 
 let $emit=defineEmits(['changeSence']);

@@ -61,10 +61,10 @@
 
 <script setup lang="ts">
 import { ref ,watch,onBeforeUnmount} from 'vue';
-import type {HasSpuResponseData,Records, SpuData,SkuInfoData,SkuData} from '../../../api/user/product/spu/type'
+import type {HasSpuResponseData,Records, SpuData,SkuInfoData,SkuData} from '../../../api/product/spu/type'
 import Category from '../../../components/Category/index.vue'
 import useCategoryStore from '../../../store/modules/category';
-import { reqGetSpu,reqSkuInfo,reqDeleteSku } from '../../../api/user/product/spu/index';
+import { reqGetSpu,reqSkuInfo,reqDeleteSku } from '../../../api/product/spu/index';
 import SkuForm from './skuForm.vue';
 import SpuForm from './spuForm.vue';
 import { ElMessage } from 'element-plus';

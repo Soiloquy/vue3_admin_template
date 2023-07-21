@@ -62,8 +62,8 @@
 
 <script setup lang="ts">
 import { ref ,onMounted,reactive} from 'vue';
-import { reqHasTrademark ,reqAddOrUpdateTrademark,reqDeleteTrademark} from '../../../api/user/product/trademark';
-import type {Records,TradeMarkResponseData,TradeMark} from '../../../api/user/product/trademark/type'
+import { reqHasTrademark ,reqAddOrUpdateTrademark,reqDeleteTrademark} from '../../../api/product/trademark';
+import type {Records,TradeMarkResponseData,TradeMark} from '../../../api/product/trademark/type'
 import { ElMessage } from 'element-plus';
 
 let currentPage=ref(1)
