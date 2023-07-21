@@ -36,3 +36,7 @@ export interface SkuResponseData extends ResponseData{
         searchCount:boolean
     }
 }
+
+export interface SkuInfoData extends ResponseData{
+    data:SkuData
+}
