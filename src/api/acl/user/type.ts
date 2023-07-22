@@ -10,9 +10,9 @@ export interface UserInfo{
     createTime?:string,
     UpdateTime?:string,
     username:string,
-    password:string,
+    password?:string,
     name:string,
-    phone:null,
+    phone?:null,
     roleName?:string
 }
 
