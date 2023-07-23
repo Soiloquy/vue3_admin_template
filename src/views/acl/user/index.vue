@@ -25,8 +25,8 @@
             <el-table-column label="更新时间" align="center" prop="updateTime"></el-table-column>
             <el-table-column label="操作" align="center">
                 <template #="{row}">
-                    <el-button type="success" icon="User" style="margin-bottom: 5px;">分配角色</el-button>
-                    <el-button type="primary" icon="Edit" @click="updateUser(row)">编辑</el-button>
+                    <el-button type="success" icon="User" style="margin-bottom: 5px;" @click="distributeRelo(row)">分配角色</el-button>
+                    <el-button type="primary" icon="Edit" @click="EditUser(row)">编辑</el-button>
                     <el-button type="danger" icon="Delete">删除</el-button>
                 </template>
             </el-table-column>
@@ -51,7 +51,7 @@
             <el-form-item label="用户昵称" prop="name">
                 <el-input placeholder="请输入用户昵称" v-model="userParams.name"></el-input>
             </el-form-item>
-            <el-form-item label="用户密码" prop="password">
+            <el-form-item label="用户密码" prop="password" v-show="passwordShow">
                 <el-input placeholder="请输入用户密码" type="password" v-model="userParams.password"></el-input>
             </el-form-item>
         </el-form>
@@ -61,7 +61,32 @@
                 <el-button type="danger" @click="cancle">取消</el-button>
             </div>
         </template>
-    </el-drawer>  
+    </el-drawer>
+    <!-- 分配职位 -->
+    <el-drawer v-model="drawer2" title="分配职位">
+        <el-form :model="userParams" hide-required-asterisk="false">
+            <el-form-item label="用户姓名" prop="username">
+                <el-input placeholder="请输入用户姓名" v-model="userParams.username" disabled></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-checkbox
+                    v-model="checkAll"
+                    :indeterminate="indeterminate"
+                    @change="handleCheckAllChange"
+                    >全选
+                </el-checkbox>
+                <el-checkbox-group>
+                    <el-checkbox v-for="role in 10" :key="role" :label="role">{{ role }}</el-checkbox>
+                </el-checkbox-group>
+            </el-form-item>
+        </el-form>
+        <template #footer>
+            <div style="flex:auto">
+                <el-button type="primary" @click="confirm">确定</el-button>
+                <el-button type="danger" @click="cancle">取消</el-button>
+            </div>
+        </template>
+    </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -82,6 +107,10 @@ let userParams=reactive<UserInfo>({
     password:'',
 })
 let addUserFromRef=ref()
+let passwordShow=ref<boolean>(true)
+let drawer2=ref<boolean>(false)
+let indeterminate=ref<boolean>(false)
+let checkAll=ref<boolean>(false)
 
 const getHasUser=async(page=1)=>{
     currentPage.value=page
@@ -101,8 +130,10 @@ const changePageSize=()=>{
 
 const addUser=()=>{
     drawTitle.value='添加用户'
+    passwordShow.value=true
     drawer.value=true
     Object.assign(userParams,{
+        id:null,
         username:'',
         name:'',
         password:'',
@@ -116,18 +147,23 @@ const addUser=()=>{
     },120)
 }
 
-const updateUser=(row:any)=>{
+const EditUser=(row:any)=>{
     drawTitle.value='修改用户'
+    passwordShow.value=false
     drawer.value=true
-    Object.assign(userParams,{
-        username:'',
-        name:'',
-        password:'',
-    })
+    Object.assign(userParams,row)
+    setTimeout(()=>{
+        nextTick(()=>{
+            addUserFromRef.value.clearValidate('username');
+            addUserFromRef.value.clearValidate('name');
+            addUserFromRef.value.clearValidate('password');
+        })
+    },120)
 }
 
 const cancle=()=>{
     drawer.value=false
+    drawer2.value=false
 }
 
 const confirm=async()=>{
@@ -140,7 +176,8 @@ const confirm=async()=>{
             type:'success',
             message:userParams.id?'更新成功':'添加成功'
         })
-        getHasUser(currentPage.value)
+        getHasUser(userParams.id?currentPage.value:1)
+        // window.location.reload()
     }else{
         ElMessage({
             type:'error',
@@ -166,10 +203,10 @@ const validatorPassword=(_:any,value:any,callback:any)=>{
     if (!value) {
         return callback(new Error('密码不能为空'))
     }
-    if (/^(?=.*[a-zA-Z])(?=.*[0-9])[A-Za-z0-9]{8,18}$/.test(value)) {
+    if (/^(?=.*[a-zA-Z])(?=.*[0-9])[A-Za-z0-9]{8,32}$/.test(value)) {
         callback()
     }else{
-        callback(new Error("密码必须由字母、数字组成,密码长度为8-18位"))
+        callback(new Error("密码必须由字母、数字组成,密码长度为8-32位"))
     }
 }
 
@@ -184,6 +221,15 @@ const rules={
     password:[
         {trigger:'change',validator:validatorPassword}
     ]
+}
+
+const distributeRelo=(row:any)=>{
+    drawer2.value=true
+    Object.assign(userParams,row)
+}
+
+const handleCheckAllChange=()=>{
+    
 }
 </script>
 
