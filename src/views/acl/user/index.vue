@@ -340,4 +340,7 @@ const reset=()=>{
     display: flex;
     justify-content: space-between;
 }
+.el-checkbox:last-of-type {
+    margin-right: 20px !important
+}
 </style>
