@@ -33,3 +33,24 @@ export interface UserResponseData extends ResponseData{
         pages:number
     }
 }
+// 职位ts类型
+export interface RoleData{
+    id?:number,
+    createTime?:string,
+    UpdateTime?:string,
+    roleName:string,
+    remark:null
+}
+
+export interface AllRolesResponseData extends ResponseData{
+    data:{
+        assignRoles:RoleData[],
+        allRolesList:RoleData[]
+    }
+}
+
+// 分配职位
+export interface SetRole{
+    roleIdList:number[],
+    userId:number
+}

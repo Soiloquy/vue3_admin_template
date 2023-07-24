@@ -2,19 +2,19 @@
     <el-card style="height: 80px;">
         <el-form :inline="true" class="form">
             <el-form-item label="用户名：">
-                <el-input placeholder="请输入用户名"></el-input>
+                <el-input placeholder="请输入用户名" v-model="keyWord"></el-input>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary">搜索</el-button>
-                <el-button type="primary">重置</el-button>
+                <el-button type="primary" :disabled="keyWord?false:true" @click="searchUser">搜索</el-button>
+                <el-button type="primary" @click="reset">重置</el-button>
             </el-form-item>
         </el-form>
     </el-card>
     <el-card style="margin: 10px 0;">
         <el-button type="primary" icon="Plus" @click="addUser">添加用户</el-button>
-        <el-button type="danger" icon="Delete">批量删除</el-button>
+        <el-button type="danger" icon="Delete" :disabled="seleteArr.length?false:true" @click="deleteUserList">批量删除</el-button>
         <!-- 表格 -->
-        <el-table border style="margin: 10px 0;" :data="userArr">
+        <el-table border style="margin: 10px 0;" :data="userArr" @selection-change="seleteChange">
             <el-table-column type="selection" align="center"></el-table-column>
             <el-table-column label="序号" align="center" type="index"></el-table-column>
             <el-table-column label="用户ID" align="center" prop='id'></el-table-column>
@@ -27,7 +27,11 @@
                 <template #="{row}">
                     <el-button type="success" icon="User" style="margin-bottom: 5px;" @click="distributeRelo(row)">分配角色</el-button>
                     <el-button type="primary" icon="Edit" @click="EditUser(row)">编辑</el-button>
-                    <el-button type="danger" icon="Delete">删除</el-button>
+                    <el-popconfirm title="你确定要删除？" icon-color="#ec2727" @confirm="DeleteUser(row)">
+                        <template #reference>
+                            <el-button type="danger" icon="Delete">删除</el-button>
+                        </template>
+                    </el-popconfirm>
                 </template>
             </el-table-column>
         </el-table>
@@ -75,14 +79,14 @@
                     @change="handleCheckAllChange"
                     >全选
                 </el-checkbox>
-                <el-checkbox-group>
-                    <el-checkbox v-for="role in 10" :key="role" :label="role">{{ role }}</el-checkbox>
+                <el-checkbox-group v-model="assignRole" @change="handleChecked">
+                    <el-checkbox v-for="role in allRole" :key="role.createTime" :label="role">{{ role.roleName }}</el-checkbox>
                 </el-checkbox-group>
             </el-form-item>
         </el-form>
         <template #footer>
             <div style="flex:auto">
-                <el-button type="primary" @click="confirm">确定</el-button>
+                <el-button type="primary" @click="updateRole">确定</el-button>
                 <el-button type="danger" @click="cancle">取消</el-button>
             </div>
         </template>
@@ -91,9 +95,10 @@
 
 <script setup lang="ts">
 import { ref,onMounted,reactive, nextTick } from 'vue';
-import { reqUserInfo,reqAddOrUpdateUser } from '../../../api/acl/user/index';
-import type { UserResponseData,Records,UserInfo } from '../../../api/acl/user/type';
+import { reqUserInfo,reqAddOrUpdateUser,reqAllRole,reqSetUserRole,reqDeleteListUser,reqDeleteUser } from '../../../api/acl/user/index';
+import type { UserResponseData,Records,UserInfo,AllRolesResponseData,RoleData} from '../../../api/acl/user/type';
 import { ElMessage } from 'element-plus';
+import useLayoutSettingStore from '../../../store/modules/setting';
 
 let currentPage=ref<number>(1)
 let pageSize=ref(5)
@@ -111,10 +116,15 @@ let passwordShow=ref<boolean>(true)
 let drawer2=ref<boolean>(false)
 let indeterminate=ref<boolean>(false)
 let checkAll=ref<boolean>(false)
+let allRole=ref<RoleData[]>([])
+let assignRole=ref<RoleData[]>([])
+let seleteArr=ref<RoleData[]>([])
+let keyWord=ref<string>('')
+let settingStore=useLayoutSettingStore()
 
 const getHasUser=async(page=1)=>{
     currentPage.value=page
-    let result:UserResponseData=await reqUserInfo(currentPage.value,pageSize.value)
+    let result:UserResponseData=await reqUserInfo(currentPage.value,pageSize.value,keyWord.value)
     if (result.code==200) {
         total.value=result.data.total
         userArr.value=result.data.records
@@ -223,13 +233,105 @@ const rules={
     ]
 }
 
-const distributeRelo=(row:any)=>{
-    drawer2.value=true
+const distributeRelo=async(row:any)=>{
     Object.assign(userParams,row)
+    let result:AllRolesResponseData=await reqAllRole(row.id)
+    if (result.code==200) {
+        allRole.value=result.data.allRolesList
+        assignRole.value=result.data.assignRoles
+        if (assignRole.value.length!=0) {
+            indeterminate.value=true
+        }else{
+            indeterminate.value=false
+        }
+        drawer2.value=true
+    }else{
+        ElMessage({
+            type:'error',
+            message:'获取信息失败'
+        })
+    }
 }
 
-const handleCheckAllChange=()=>{
-    
+const handleCheckAllChange=(val:boolean)=>{
+    assignRole.value= val?allRole.value:[]
+    indeterminate.value=false
+}
+
+const handleChecked=(value:string[])=>{
+    checkAll.value=value.length===allRole.value.length
+    if (value.length!=0&&value.length!==allRole.value.length) {
+        indeterminate.value=true
+    }else{
+        indeterminate.value=false
+    }
+}
+
+const updateRole=async()=>{
+    let data:any={
+        userId:userParams.id,
+        roleIdList:assignRole.value.map(item=>item.id)
+    }
+    let result=await reqSetUserRole(data)
+    if (result.code==200) {
+        ElMessage({
+            type:'success',
+            message:'更新成功'
+        })
+        drawer2.value=false
+        getHasUser(currentPage.value)
+    }else{
+        ElMessage({
+            type:'error',
+            message:'更新失败'
+        })
+    }
+}
+
+const DeleteUser=async(row:any)=>{
+    let result = await reqDeleteUser(row.id)
+    if (result.code==200) {
+        ElMessage({
+            type:'success',
+            message:'删除成功'
+        })
+        getHasUser(currentPage.value)
+    }else{
+        ElMessage({
+            type:'error',
+            message:'删除失败'
+        })
+    }
+}
+
+const seleteChange=(value:any)=>{
+    seleteArr.value=value
+}
+
+const deleteUserList=async()=>{
+    let useridList=seleteArr.value.map(item=>item.id)
+    let result=await reqDeleteListUser((useridList as number[]))
+    if (result.code==200) {
+        ElMessage({
+            type:'success',
+            message:'批量删除成功'
+        })
+        getHasUser(currentPage.value)
+    }else{
+        ElMessage({
+            type:'error',
+            message:'批量删除失败'
+        })
+    }
+}
+
+const searchUser=()=>{
+    getHasUser()
+    keyWord.value=''
+}
+
+const reset=()=>{
+    settingStore.refresh=!settingStore.refresh
 }
 </script>
 
