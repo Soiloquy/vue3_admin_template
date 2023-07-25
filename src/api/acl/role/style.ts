@@ -27,3 +27,23 @@ export interface RoleResponseData extends ResponseData{
         pages:number
     }
 }
+
+// 菜单ts类型
+export interface MenuData{
+    id:number,
+    createTime:string,
+    updateTime:string,
+    pid:number,
+    name:string,
+    code:string,
+    toCode:string,
+    type:number,
+    status:null,
+    level:number,
+    children?:[],
+    select:boolean
+}
+
+export interface MenuResponseData extends ResponseData{
+    data:MenuData[]
+}
