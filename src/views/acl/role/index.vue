@@ -23,7 +23,7 @@
                 <template #="{row}">
                     <el-button type="success" icon="User" style="margin-bottom: 5px;" @click="distributeRelo(row)">分配权限</el-button>
                     <el-button type="primary" icon="Edit" @click="EditRole(row)">编辑</el-button>
-                    <el-popconfirm title="你确定要删除？" icon-color="#ec2727" @confirm="">
+                    <el-popconfirm title="你确定要删除？" icon-color="#ec2727" @confirm="removeRole(row)">
                         <template #reference>
                             <el-button type="danger" icon="Delete">删除</el-button>
                         </template>
@@ -58,15 +58,15 @@
     <!-- 分配权限 -->
     <el-drawer v-model="drawer" title="分配权限">
         <el-tree
+            node-key="id"
             :props="props"
             :data="menuArr"
             default-expand-all
             show-checkbox
-            :default-checked-keys="[]"
-        />
+            :default-checked-keys="selectArr" ref="tree"/>
         <template #footer>
             <div style="flex:auto">
-                <el-button type="primary" @click="">确定</el-button>
+                <el-button type="primary" @click="handler">确定</el-button>
                 <el-button type="danger" @click="drawer=false">取消</el-button>
             </div>
         </template>
@@ -75,7 +75,7 @@
 
 <script setup lang="ts">
 import { ref,onMounted,reactive,nextTick } from 'vue';
-import {reqAllRoleList,reqAddOrUpdateRole,reqAllRermission} from '../../../api/acl/role/index'
+import {reqAllRoleList,reqAddOrUpdateRole,reqAllRermission,reqSetPermission,reqRemoveRole} from '../../../api/acl/role/index'
 import type { RoleResponseData,RoleData,MenuData,MenuResponseData } from '../../../api/acl/role/style';
 import useLayoutSettingStore from '../../../store/modules/setting';
 import { ElMessage } from 'element-plus';
@@ -93,6 +93,8 @@ let showDialog=ref<boolean>(false)
 let form=ref()
 let drawer=ref<boolean>(false)
 let menuArr=ref<MenuData[]>([])
+let selectArr=ref<number[]>([])
+let tree=ref()
 
 const getHasRole=async(page=1)=>{
     currentPage.value=page
@@ -168,17 +170,70 @@ const rules={
     ]
 }
 
+let roleId:number
 const distributeRelo=async(row:any)=>{
     drawer.value=true
+    roleId=row.id
     let result:MenuResponseData=await reqAllRermission(row.id)
     if (result.code==200) {
         menuArr.value=result.data
+        selectArr=filterMenuArr(menuArr.value,[])
     }
 }
 
 const props={
     children:'children',
     label:'name'
+}
+
+const filterMenuArr=(allData:any,initArr:any)=>{
+    allData.forEach((item:any) => {
+        if (item.select&&item.level==4) {
+            initArr.push(item.id)
+        }
+        if (item.children&&item.children.length>0) {
+            filterMenuArr(item.children,initArr)
+        }
+    });
+    return initArr
+}
+
+const handler=async()=>{
+    let arr = tree.value.getCheckedKeys();
+    //半选的ID
+    let arr1 = tree.value.getHalfCheckedKeys();
+    let permissionId = arr.concat(arr1);
+    console.log(permissionId);
+    
+    let result=await reqSetPermission(roleId,permissionId)
+    if (result.code==200) {
+        ElMessage({
+            type:'success',
+            message:'更新成功'
+        })
+        drawer.value=false
+    } else {
+        ElMessage({
+            type:'error',
+            message:'更新失败'
+        })
+    }
+}
+
+const removeRole=async(row:any)=>{
+    let result=await reqRemoveRole(row.id)
+    if (result.code==200) {
+        ElMessage({
+            type:'success',
+            message:'删除成功'
+        })
+        getHasRole()
+    } else {
+        ElMessage({
+            type:'error',
+            message:'删除失败'
+        })
+    }
 }
 </script>
 

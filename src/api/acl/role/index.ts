@@ -8,7 +8,11 @@ enum API{
     ADDROLE_URL='admin/acl/role/save',
     UPDATEDROLE_URL='admin/acl/role/update',
     // 获取全部权限数据
-    ALLPERMISSION_URL='admin/acl/permission/toAssign/'
+    ALLPERMISSION_URL='admin/acl/permission/toAssign/',
+    // 给相应职位分配权限
+    SETPERMISSION_URL='admin/acl/permission/doAssign/?',
+    // 删除职位
+    REMOVE_URL='/admin/acl/role/remove/'
 }
 
 export const reqAllRoleList=(page:number,limit:number,roleName:string)=>
@@ -24,3 +28,9 @@ export const reqAddOrUpdateRole=(data:RoleData)=>{
 
 export const reqAllRermission=(roleId:number)=>
 requset.get<any,MenuResponseData>(API.ALLPERMISSION_URL+roleId)
+
+export const reqSetPermission=(roleId:number,permissionId:number[])=>
+requset.post<any,any>(API.SETPERMISSION_URL+`roleId=${roleId}&permission=${permissionId}`)
+
+export const reqRemoveRole=(roleId:number)=>
+requset.delete<any,any>(API.REMOVE_URL+roleId)
