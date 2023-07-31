@@ -22,3 +22,11 @@ export interface Permission{
 export interface PermissionResponseData extends ResponseData{
     data:Permission[]
 }
+
+export interface MenuParams{
+    id?:number,
+    code:string,//权限值
+    level:number,
+    name:string,
+    pid:number
+}
