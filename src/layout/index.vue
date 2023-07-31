@@ -70,7 +70,6 @@ let $router=useRoute();
         height: $base-tabbar-height;
         top: 0px;
         left: $base-menu-width;
-        background-color: #eee;
         transition: all 0.3s;
         &.fold{
             width: calc(100vw - $base-menu-min-width);

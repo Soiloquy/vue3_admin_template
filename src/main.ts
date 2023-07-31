@@ -8,7 +8,8 @@ import "element-plus/dist/index.css"
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 //引入自定义插件对象:注册整个项目全局组件
 import gloalComponent from './components'
-
+// 暗黑模式
+import 'element-plus/theme-chalk/dark/css-vars.css'
 import 'virtual:svg-icons-register'
 import './styles/index.scss'
 // 引入路由
