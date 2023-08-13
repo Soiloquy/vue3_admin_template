@@ -94,7 +94,6 @@ window.onresize=()=>{
                 }
                 .line{
                     flex:1;
-                    background-color: antiquewhite;
                 }
             }
         }
