@@ -15,7 +15,11 @@
                     <Map class="map"/>
                     <Line class="line"/>
                 </div>
-                <div class="right"></div>
+                <div class="right">
+                    <Rank class="rank"/>
+                    <Year class="year"/>
+                    <Conter class="conter"/>
+                </div>
             </div>
         </div>
     </div>
@@ -27,6 +31,9 @@ import Top from './components/top/index.vue'
 import Tourist from './components/tourist/index.vue'
 import Sex from './components/sex/index.vue'
 import Age from './components/age/index.vue'
+import Rank from './components/rank/index.vue'
+import Year from './components/year/index.vue'
+import Conter from './components/conter/index.vue'
 
 import Map from './components/map/index.vue'
 import Line from './components/line/index.vue'
@@ -69,6 +76,17 @@ window.onresize=()=>{
             display: flex;
             .right{
                 flex: 1;
+                display: flex;
+                flex-direction: column;
+                .rank{
+                    flex: 1.5;
+                }
+                .year{
+                    flex:1;
+                }
+                .conter{
+                    flex:1;
+                }
             }
             .left{
                 display: flex;
