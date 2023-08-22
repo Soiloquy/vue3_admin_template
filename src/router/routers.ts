@@ -1,3 +1,4 @@
+// 常量路由：所有人都可以访问
 export const constantRoute=[
     {
         path:'/login',
@@ -40,6 +41,20 @@ export const constantRoute=[
         }
     },
     {
+        path:'/404',
+        component:()=>import('../views/404/index.vue'),
+        name:'404',
+        meta:{
+            title:'404',
+            hidden:true
+        }
+    }
+]
+
+
+// 异步路由
+export const asyncRoute=[
+    {
         path:'/acl',
         component:()=>import('../layout/index.vue'),
         name:'Acl',
@@ -53,7 +68,7 @@ export const constantRoute=[
             {
                 path:'/acl/user',
                 component:()=>import('../views/acl/user/index.vue'),
-                name:'Acl',
+                name:'User',
                 meta:{
                     title:'用户管理',
                     hidden:false,
@@ -134,16 +149,11 @@ export const constantRoute=[
                 }
             },
         ]
-    },
-    {
-        path:'/404',
-        component:()=>import('../views/404/index.vue'),
-        name:'404',
-        meta:{
-            title:'404',
-            hidden:true
-        }
-    },
+    }
+]
+
+// 任意路由
+export const anyRoute=[
     {
         path:'/:pathMatch(.*)*',
         redirect:'/404',

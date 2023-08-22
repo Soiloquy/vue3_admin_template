@@ -5,7 +5,23 @@ import type { UserState } from "./types/type";
 import type { loginFormData,loginResponseData,userInfoResponseData } from "../../api/type";
 import { SET_TOKEN ,GET_TOKEN ,REMOVE_TOKEN} from "../../utils/token";
 // 引入常量路由
-import { constantRoute } from "../../router/routers";
+import { constantRoute,asyncRoute,anyRoute } from "../../router/routers";
+// 引入深拷贝方法
+// @ts-ignore
+import cloneDeep from 'lodash/cloneDeep'
+import router from "../../router";
+
+// 用于过滤当前用户需要展示的异步路由
+function filterAsyncRoute(asyncRoute:any,routes:any){
+    return asyncRoute.filter((item:any)=>{
+        if (routes.includes(item.name)) {
+            if (item.children&&item.children.length>0) {
+                item.children=filterAsyncRoute(item.children,routes)
+            }
+            return true
+        }
+    })
+}
 
 let useUserStore=defineStore('User',{
     // 存储数据的地方
@@ -40,6 +56,13 @@ let useUserStore=defineStore('User',{
             if (result.code==200) {
                 this.username=result.data.name;
                 this.avatar=result.data.avatar;
+                let userAsyncRouter= filterAsyncRoute(cloneDeep(asyncRoute),result.data.routes)
+                // 菜单的数据
+                this.menuRoutes=[...constantRoute,...userAsyncRouter,...anyRoute];
+                // 异步路由、任意路由追加
+                [...userAsyncRouter,...anyRoute].forEach((route:any) => {
+                    router.addRoute(route)
+                })
                 return 'OK'
             } else {
                 return Promise.reject(new Error(result.message))
