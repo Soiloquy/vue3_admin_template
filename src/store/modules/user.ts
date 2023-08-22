@@ -31,6 +31,7 @@ let useUserStore=defineStore('User',{
             menuRoutes:constantRoute,
             username:'',
             avatar:'',
+            buttons:[]
         }
     },
     //异步|逻辑
@@ -56,6 +57,8 @@ let useUserStore=defineStore('User',{
             if (result.code==200) {
                 this.username=result.data.name;
                 this.avatar=result.data.avatar;
+                this.buttons=result.data.buttons
+
                 let userAsyncRouter= filterAsyncRoute(cloneDeep(asyncRoute),result.data.routes)
                 // 菜单的数据
                 this.menuRoutes=[...constantRoute,...userAsyncRouter,...anyRoute];

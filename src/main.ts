@@ -18,7 +18,10 @@ import router from './router'
 import pinia from './store'
 // 引入路由鉴权
 import './permission'
+// 引入自定义指令文件
+import {isHasButton} from './directive/hasButton'
 const app=createApp(App)
+isHasButton(app)
 // 安装element-plus插件
 app.use(ElementPlus,{
     locale:zhCn
