@@ -1,6 +1,6 @@
 <template>
     <div class="logo">
-        <img src="logo.png" :class="{flod:layoutSettingStore.fold}">
+        <img src="../../../public/logo.png" :class="{flod:layoutSettingStore.fold}">
         <p>后台管理系统</p>
     </div>
 </template>
